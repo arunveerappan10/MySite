@@ -1,0 +1,33 @@
+import {
+  Award,
+  BadgeCheck,
+  Briefcase,
+  GraduationCap,
+  Heart,
+  History,
+  Inbox,
+  LayoutDashboard,
+  ListOrdered,
+  Quote,
+  Settings,
+  Share2,
+  Sparkles,
+  User,
+} from "lucide-react";
+
+export const ADMIN_NAV_ITEMS = [
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/enquiries", label: "Enquiries", icon: Inbox },
+  { href: "/admin/profile", label: "Profile", icon: User },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
+  { href: "/admin/sections", label: "Sections", icon: ListOrdered },
+  { href: "/admin/projects", label: "Projects", icon: Briefcase },
+  { href: "/admin/experience", label: "Experience", icon: History },
+  { href: "/admin/skills", label: "Skills", icon: Sparkles },
+  { href: "/admin/testimonials", label: "Testimonials", icon: Quote },
+  { href: "/admin/recognitions", label: "Recognitions", icon: Award },
+  { href: "/admin/certifications", label: "Certifications", icon: BadgeCheck },
+  { href: "/admin/education", label: "Education", icon: GraduationCap },
+  { href: "/admin/interests", label: "Interests", icon: Heart },
+  { href: "/admin/social-links", label: "Social links", icon: Share2 },
+] as const;
