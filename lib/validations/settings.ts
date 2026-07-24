@@ -7,6 +7,8 @@ export const settingsSchema = z.object({
   footer_tagline: z.string().trim().min(1, "Required").max(80),
   nav_cta_label: z.string().trim().min(1, "Required").max(40),
   nav_cta_href: z.string().trim().min(1, "Required").max(200),
+  og_image_url: z.string().url().nullable(),
+  resume_file_url: z.string().url().nullable(),
 });
 
 export type SettingsInput = z.infer<typeof settingsSchema>;

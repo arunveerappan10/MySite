@@ -3,6 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { FileUploadField } from "@/components/admin/file-upload-field";
+import { ImageUploadField } from "@/components/admin/image-upload-field";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -28,11 +30,16 @@ export function SettingsForm({ settings }: { settings: SettingsRow }) {
       footer_tagline: settings.footer_tagline,
       nav_cta_label: settings.nav_cta_label,
       nav_cta_href: settings.nav_cta_href,
+      og_image_url: settings.og_image_url,
+      resume_file_url: settings.resume_file_url,
     },
   });
 
   async function onSubmit(data: SettingsInput) {
-    const result = await updateSettings(data);
+    const result = await updateSettings(data, {
+      ogImageUrl: settings.og_image_url,
+      resumeFileUrl: settings.resume_file_url,
+    });
     if (result.error) {
       toast.error(result.error);
     } else {
@@ -65,6 +72,32 @@ export function SettingsForm({ settings }: { settings: SettingsRow }) {
               <FormLabel>Site description (SEO meta description)</FormLabel>
               <FormControl>
                 <Textarea rows={3} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="og_image_url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Social share image (Open Graph)</FormLabel>
+              <FormControl>
+                <ImageUploadField value={field.value} onChange={field.onChange} collection="settings" recordId="1" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="resume_file_url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Resume (PDF)</FormLabel>
+              <FormControl>
+                <FileUploadField value={field.value} onChange={field.onChange} label="resume" />
               </FormControl>
               <FormMessage />
             </FormItem>
