@@ -64,7 +64,7 @@ export function SiteFooter({ sections, settings, profile }: SiteFooterProps) {
               {settings.resume_file_url && (
                 <li>
                   <a
-                    href={settings.resume_file_url}
+                    href="/resume"
                     download
                     className="inline-flex items-center gap-2 hover:text-primary transition-colors"
                   >

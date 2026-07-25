@@ -73,7 +73,7 @@ export function HeroSection({ profile, settings }: HeroSectionProps) {
             </a>
             {settings.resume_file_url && (
               <a
-                href={settings.resume_file_url}
+                href="/resume"
                 download
                 className="group inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
               >

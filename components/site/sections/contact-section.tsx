@@ -33,7 +33,7 @@ export function ContactSection({ section, profile, settings, socialLinks }: Cont
           </a>
           {settings.resume_file_url && (
             <a
-              href={settings.resume_file_url}
+              href="/resume"
               download
               className="shine-on-hover group inline-flex items-center gap-3 rounded-full border border-foreground px-5 py-2.5 text-sm hover:bg-primary hover:border-primary hover:text-primary-foreground transition-colors"
             >
