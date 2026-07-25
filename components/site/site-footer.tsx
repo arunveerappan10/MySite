@@ -48,12 +48,22 @@ export function SiteFooter({ sections, settings, profile }: SiteFooterProps) {
               Direct
             </div>
             <ul className="space-y-2 text-sm">
-              <li className="flex items-center gap-2">
-                <Mail className="h-3.5 w-3.5 text-primary" /> {profile.email}
+              <li>
+                <a
+                  href={`mailto:${profile.email}`}
+                  className="inline-flex items-center gap-2 hover:text-primary transition-colors"
+                >
+                  <Mail className="h-3.5 w-3.5 text-primary" /> {profile.email}
+                </a>
               </li>
               {profile.phone && (
-                <li className="flex items-center gap-2">
-                  <Phone className="h-3.5 w-3.5 text-primary" /> {profile.phone}
+                <li>
+                  <a
+                    href={`tel:${profile.phone.replace(/\s+/g, "")}`}
+                    className="inline-flex items-center gap-2 hover:text-primary transition-colors"
+                  >
+                    <Phone className="h-3.5 w-3.5 text-primary" /> {profile.phone}
+                  </a>
                 </li>
               )}
               {profile.location && (

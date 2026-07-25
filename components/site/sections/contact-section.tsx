@@ -53,14 +53,14 @@ export function ContactSection({ section, profile, settings, socialLinks }: Cont
               </a>
             )}
             {profile.phone && (
-              <div>
+              <a href={`tel:${profile.phone.replace(/\s+/g, "")}`} className="group">
                 <div className="font-mono-tight text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
                   Phone
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 group-hover:text-primary transition-colors">
                   <Phone className="h-4 w-4" /> {profile.phone}
                 </div>
-              </div>
+              </a>
             )}
             {profile.location && (
               <div>
