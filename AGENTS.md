@@ -7,6 +7,18 @@ single page at `app/(site)/page.tsx` composed of section components.
 Next.js 15.5 (App Router) · React 19 · TypeScript · Tailwind v4 · shadcn/ui · Supabase ·
 React Hook Form + Zod · Resend · Cloudflare Turnstile.
 
+Next 15 made the request APIs async, and this is the version-sensitive thing most likely
+to be written wrong from memory. `params` and `searchParams` are Promises, and `headers()`
+and `cookies()` must be awaited:
+
+```ts
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+```
+
+Every `[id]` route here already does this. Match them rather than reaching for the Next 14
+synchronous shape.
+
 ## Verifying a change
 
 ```bash
