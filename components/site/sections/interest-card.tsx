@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { FadeIn } from "@/components/motion/fade-in";
 import { fadeInVariants, staggerContainerVariants } from "@/components/motion/variants";
 import {
@@ -23,8 +23,8 @@ const ROW_TRANSITION = { duration: 0.55, ease: MOTION_EASE };
  * chess links out to a profile, volunteering lists the events attended. Tiles with
  * neither stay inert rather than opening an empty dialog.
  *
- * There is no explicit affordance badge on the tile; the card's own hover response
- * (lift, border, glow, underline sweep) plus a pointer cursor carry it. */
+ * Openable tiles carry a persistent "View details" cue rather than a corner badge —
+ * hover-only affordances leave the tile looking inert until the pointer lands on it. */
 export function InterestCard({ interest, index }: { interest: InterestRow; index: number }) {
   const Icon = getIcon(interest.icon);
   const details = interest.details ?? [];
@@ -48,6 +48,15 @@ export function InterestCard({ interest, index }: { interest: InterestRow; index
           {interest.label}
         </div>
       </div>
+      {isInteractive && (
+        <span
+          aria-hidden
+          className="mt-auto inline-flex items-center gap-1.5 font-mono-tight text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 transition-colors duration-500 group-hover:text-primary"
+        >
+          View details
+          <ArrowRight className="h-3 w-3 transition-transform duration-500 group-hover:translate-x-1" />
+        </span>
+      )}
       <span
         aria-hidden
         className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"
@@ -128,13 +137,15 @@ export function InterestCard({ interest, index }: { interest: InterestRow; index
                   key={`${detail.label}-${i}`}
                   variants={fadeInVariants}
                   transition={ROW_TRANSITION}
-                  className="group/row flex items-baseline justify-between gap-6 border-b border-[color:var(--hairline)] py-4 transition-colors duration-300 hover:bg-primary/[0.04]"
+                  className="group/row flex flex-col gap-1 border-b border-[color:var(--hairline)] py-4 transition-colors duration-300 hover:bg-primary/[0.04] sm:flex-row sm:items-baseline sm:justify-between sm:gap-8"
                 >
-                  <span className="text-sm md:text-base leading-snug transition-transform duration-300 group-hover/row:translate-x-1">
+                  <span className="font-medium text-primary leading-snug transition-transform duration-300 group-hover/row:translate-x-1">
                     {detail.label}
                   </span>
+                  {/* Values run from a short date to a full sentence, so this wraps rather
+                      than shrink-0'ing and crushing the label. */}
                   {detail.value && (
-                    <span className="font-mono-tight text-[11px] uppercase tracking-[0.16em] text-primary shrink-0">
+                    <span className="text-sm leading-relaxed text-foreground/90 sm:max-w-[58%] sm:text-right">
                       {detail.value}
                     </span>
                   )}
