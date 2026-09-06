@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { GripVertical, Pencil } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { PublishToggle } from "@/components/admin/publish-toggle";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -40,8 +41,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import type { SectionRow } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { sectionEditSchema, type SectionEditInput } from "@/lib/validations/sections";
-import { reorderSections, updateSectionCopy } from "./actions";
+import { reorderSections, toggleSectionPublish, updateSectionCopy } from "./actions";
 
 export function SectionsList({ sections }: { sections: SectionRow[] }) {
   const [items, setItems] = useState(sections);
@@ -73,6 +75,19 @@ export function SectionsList({ sections }: { sections: SectionRow[] }) {
     }
   }
 
+  async function handleTogglePublish(id: string, isPublished: boolean) {
+    const previous = items;
+    setItems((prev) => prev.map((s) => (s.id === id ? { ...s, is_published: isPublished } : s)));
+
+    const result = await toggleSectionPublish(id, isPublished);
+    if (result.error) {
+      toast.error(result.error);
+      setItems(previous);
+    } else {
+      toast.success(isPublished ? "Section shown" : "Section hidden");
+    }
+  }
+
   function handleSaved(updated: SectionEditInput) {
     setItems((prev) =>
       prev.map((s) => (s.id === updated.id ? { ...s, ...updated } : s)),
@@ -91,7 +106,12 @@ export function SectionsList({ sections }: { sections: SectionRow[] }) {
         <SortableContext items={items.map((s) => s.id)} strategy={verticalListSortingStrategy}>
           <ul className="divide-y divide-border rounded-lg border border-border">
             {items.map((section) => (
-              <SortableRow key={section.id} section={section} onEdit={() => setEditing(section)} />
+              <SortableRow
+                key={section.id}
+                section={section}
+                onEdit={() => setEditing(section)}
+                onTogglePublish={(checked) => handleTogglePublish(section.id, checked)}
+              />
             ))}
           </ul>
         </SortableContext>
@@ -106,7 +126,15 @@ export function SectionsList({ sections }: { sections: SectionRow[] }) {
   );
 }
 
-function SortableRow({ section, onEdit }: { section: SectionRow; onEdit: () => void }) {
+function SortableRow({
+  section,
+  onEdit,
+  onTogglePublish,
+}: {
+  section: SectionRow;
+  onEdit: () => void;
+  onTogglePublish: (checked: boolean) => void;
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: section.id,
   });
@@ -121,7 +149,10 @@ function SortableRow({ section, onEdit }: { section: SectionRow; onEdit: () => v
     <li
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-3 bg-card/40 px-4 py-3"
+      className={cn(
+        "flex items-center gap-3 bg-card/40 px-4 py-3 transition-opacity",
+        !section.is_published && "opacity-55",
+      )}
     >
       <button
         type="button"
@@ -148,6 +179,12 @@ function SortableRow({ section, onEdit }: { section: SectionRow; onEdit: () => v
           <p className="truncate text-xs text-muted-foreground">{section.eyebrow}</p>
         )}
       </div>
+      <PublishToggle
+        id={section.id}
+        checked={section.is_published}
+        onCheckedChange={onTogglePublish}
+        labels={{ on: "Shown", off: "Hidden" }}
+      />
       <Button type="button" variant="ghost" size="sm" onClick={onEdit} className="gap-1.5 shrink-0">
         <Pencil className="h-3.5 w-3.5" />
         Edit

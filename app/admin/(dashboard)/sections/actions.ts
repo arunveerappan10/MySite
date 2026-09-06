@@ -32,6 +32,22 @@ export async function updateSectionCopy(input: SectionEditInput) {
   return { success: true as const };
 }
 
+export async function toggleSectionPublish(id: string, isPublished: boolean) {
+  await requireAdmin();
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("sections").update({ is_published: isPublished }).eq("id", id);
+
+  if (error) {
+    logger.error("Failed to toggle section publish", { error: error.message, id });
+    return { error: "Failed to update. Please try again." };
+  }
+
+  revalidatePath("/");
+  revalidatePath("/admin/sections");
+  return { success: true as const };
+}
+
 export async function reorderSections(order: { id: string; position: number }[]) {
   await requireAdmin();
 
