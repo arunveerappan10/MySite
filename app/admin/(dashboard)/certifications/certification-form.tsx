@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -130,8 +131,17 @@ export function CertificationForm({ certification }: { certification?: Certifica
             <FormItem>
               <FormLabel>Verify URL (optional)</FormLabel>
               <FormControl>
-                <Input {...field} value={field.value ?? ""} />
+                <Input
+                  {...field}
+                  value={field.value ?? ""}
+                  placeholder="www.credly.com/badges/…"
+                  inputMode="url"
+                />
               </FormControl>
+              <FormDescription>
+                Adds the &ldquo;Verify&rdquo; link on the public certification card. Leave blank to hide it.
+                https:// is added for you.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
