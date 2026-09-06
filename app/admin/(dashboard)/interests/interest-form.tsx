@@ -112,12 +112,13 @@ export function InterestForm({ interest }: { interest?: InterestRow }) {
                   {...field}
                   value={field.value ?? ""}
                   onChange={(event) => field.onChange(event.target.value || null)}
-                  placeholder="chess.com/member/yourname"
+                  placeholder="example.com/your-profile"
                   inputMode="url"
                 />
               </FormControl>
               <FormDescription>
-                Shown as a button inside the interest&rsquo;s dialog. https:// is added for you.
+                Shown as a button inside this interest&rsquo;s dialog &mdash; a profile, a page, an
+                album. https:// is added for you.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -134,7 +135,7 @@ export function InterestForm({ interest }: { interest?: InterestRow }) {
                   {...field}
                   value={field.value ?? ""}
                   onChange={(event) => field.onChange(event.target.value || null)}
-                  placeholder="Challenge me on Chess.com"
+                  placeholder="Visit profile"
                 />
               </FormControl>
               <FormDescription>Defaults to &ldquo;Open link&rdquo;. Needs a link above.</FormDescription>
@@ -145,8 +146,8 @@ export function InterestForm({ interest }: { interest?: InterestRow }) {
         <div>
           <FormLabel>Details (optional)</FormLabel>
           <p className="mt-1 text-sm text-muted-foreground">
-            Listed inside the dialog &mdash; volunteering events and their dates, chess formats and
-            ratings. Left column is the name, right is the date or note (may be left blank).
+            Rows listed inside this interest&rsquo;s dialog. Left column is the name, right is an
+            optional date or note. Leave empty to skip the list entirely.
           </p>
           <div className="mt-2">
             <KeyValueArrayEditor name="details" maxItems={12} />

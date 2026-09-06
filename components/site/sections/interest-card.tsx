@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowUpRight, Plus } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import { FadeIn } from "@/components/motion/fade-in";
-import { buttonVariants } from "@/components/ui/button";
+import { fadeInVariants, staggerContainerVariants } from "@/components/motion/variants";
 import {
   Dialog,
   DialogContent,
@@ -12,17 +13,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { MOTION_EASE } from "@/lib/constants";
 import { getIcon } from "@/lib/icon-map";
 import type { InterestRow } from "@/lib/types";
-import { cn } from "@/lib/utils";
+
+const ROW_TRANSITION = { duration: 0.55, ease: MOTION_EASE };
 
 /** An interest tile. Tiles with a link or detail rows open a dialog holding them —
  * chess links out to a profile, volunteering lists the events attended. Tiles with
- * neither stay inert rather than opening an empty dialog. */
+ * neither stay inert rather than opening an empty dialog.
+ *
+ * There is no explicit affordance badge on the tile; the card's own hover response
+ * (lift, border, glow, underline sweep) plus a pointer cursor carry it. */
 export function InterestCard({ interest, index }: { interest: InterestRow; index: number }) {
   const Icon = getIcon(interest.icon);
   const details = interest.details ?? [];
   const isInteractive = Boolean(interest.link_url) || details.length > 0;
+  const ordinal = String(index + 1).padStart(2, "0");
 
   const face = (
     <>
@@ -35,20 +42,12 @@ export function InterestCard({ interest, index }: { interest: InterestRow; index
       </span>
       <div>
         <div className="font-mono-tight text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">
-          {String(index + 1).padStart(2, "0")}
+          {ordinal}
         </div>
         <div className="font-display text-lg leading-tight transition-transform duration-500 group-hover:translate-x-0.5">
           {interest.label}
         </div>
       </div>
-      {isInteractive && (
-        <span
-          aria-hidden
-          className="absolute top-5 right-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-500"
-        >
-          <Plus className="h-4 w-4 transition-transform duration-500 group-hover:rotate-90" />
-        </span>
-      )}
       <span
         aria-hidden
         className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"
@@ -79,40 +78,90 @@ export function InterestCard({ interest, index }: { interest: InterestRow; index
         />
       </FadeIn>
 
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="font-display text-2xl">{interest.label}</DialogTitle>
-          <DialogDescription className="sr-only">
-            More about {interest.label}
-          </DialogDescription>
-        </DialogHeader>
-
-        {details.length > 0 && (
-          <ul className="divide-y divide-[color:var(--hairline)] border-y border-[color:var(--hairline)]">
-            {details.map((detail, i) => (
-              <li key={`${detail.label}-${i}`} className="flex items-baseline justify-between gap-4 py-2.5">
-                <span className="text-sm leading-snug">{detail.label}</span>
-                {detail.value && (
-                  <span className="font-mono-tight text-[11px] uppercase tracking-[0.14em] text-primary shrink-0">
-                    {detail.value}
-                  </span>
+      <DialogContent className="sm:max-w-2xl gap-0 overflow-hidden border-[color:var(--hairline)] bg-card p-0 max-h-[85vh]">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.07] via-transparent to-transparent"
+        />
+        <div className="relative overflow-y-auto p-8 md:p-10">
+          <DialogHeader className="space-y-0">
+            <div className="flex items-center gap-5">
+              <motion.span
+                initial={{ opacity: 0, scale: 0.85, rotate: -8 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{ duration: 0.6, ease: MOTION_EASE }}
+                className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-[color:var(--hairline)] flex items-center justify-center text-primary bg-background"
+              >
+                {interest.image_url ? (
+                  <Image
+                    src={interest.image_url}
+                    alt=""
+                    width={64}
+                    height={64}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <Icon className="h-7 w-7" />
                 )}
-              </li>
-            ))}
-          </ul>
-        )}
+              </motion.span>
+              <div className="min-w-0 text-left">
+                <div className="font-mono-tight text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1.5">
+                  {ordinal}
+                </div>
+                <DialogTitle className="font-display text-2xl md:text-3xl leading-tight text-left">
+                  {interest.label}
+                </DialogTitle>
+              </div>
+            </div>
+            <DialogDescription className="sr-only">More about {interest.label}</DialogDescription>
+          </DialogHeader>
 
-        {interest.link_url && (
-          <a
-            href={interest.link_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn(buttonVariants({ variant: "outline" }), "group/cta w-full gap-2")}
-          >
-            {interest.link_label ?? "Open link"}
-            <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5" />
-          </a>
-        )}
+          {details.length > 0 && (
+            <motion.ul
+              initial="hidden"
+              animate="visible"
+              variants={staggerContainerVariants(0.07, 0.15)}
+              className="mt-9 border-t border-[color:var(--hairline)]"
+            >
+              {details.map((detail, i) => (
+                <motion.li
+                  key={`${detail.label}-${i}`}
+                  variants={fadeInVariants}
+                  transition={ROW_TRANSITION}
+                  className="group/row flex items-baseline justify-between gap-6 border-b border-[color:var(--hairline)] py-4 transition-colors duration-300 hover:bg-primary/[0.04]"
+                >
+                  <span className="text-sm md:text-base leading-snug transition-transform duration-300 group-hover/row:translate-x-1">
+                    {detail.label}
+                  </span>
+                  {detail.value && (
+                    <span className="font-mono-tight text-[11px] uppercase tracking-[0.16em] text-primary shrink-0">
+                      {detail.value}
+                    </span>
+                  )}
+                </motion.li>
+              ))}
+            </motion.ul>
+          )}
+
+          {interest.link_url && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...ROW_TRANSITION, delay: 0.15 + details.length * 0.07 }}
+              className="mt-9"
+            >
+              <a
+                href={interest.link_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group/cta inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[color:var(--hairline)] bg-background px-6 py-4 text-sm font-medium transition-all duration-500 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-[0_20px_50px_-25px_var(--primary)]"
+              >
+                {interest.link_label ?? "Open link"}
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5" />
+              </a>
+            </motion.div>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );
