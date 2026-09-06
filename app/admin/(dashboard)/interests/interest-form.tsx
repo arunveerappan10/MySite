@@ -142,14 +142,16 @@ export function InterestForm({ interest }: { interest?: InterestRow }) {
             </FormItem>
           )}
         />
-        <FormItem>
+        <div>
           <FormLabel>Details (optional)</FormLabel>
-          <KeyValueArrayEditor name="details" maxItems={12} />
-          <FormDescription>
+          <p className="mt-1 text-sm text-muted-foreground">
             Listed inside the dialog &mdash; volunteering events and their dates, chess formats and
             ratings. Left column is the name, right is the date or note (may be left blank).
-          </FormDescription>
-        </FormItem>
+          </p>
+          <div className="mt-2">
+            <KeyValueArrayEditor name="details" maxItems={12} />
+          </div>
+        </div>
         <div className="flex gap-3">
           <Button type="submit" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting ? "Saving…" : isEditing ? "Save changes" : "Create interest"}
