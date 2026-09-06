@@ -30,7 +30,6 @@ export function InterestCard({ interest, index }: { interest: InterestRow; index
   const Icon = getIcon(interest.icon);
   const details = interest.details ?? [];
   const isInteractive = Boolean(interest.link_url) || details.length > 0;
-  const ordinal = String(index + 1).padStart(2, "0");
   // Admin-authored, so rendered as typed — no uppercase transform.
   const cueLabel = interest.cue_label ?? "View details";
 
@@ -43,13 +42,8 @@ export function InterestCard({ interest, index }: { interest: InterestRow; index
           <Icon className="h-5 w-5 transition-transform duration-500 group-hover:-rotate-6" />
         )}
       </span>
-      <div>
-        <div className="font-mono-tight text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">
-          {ordinal}
-        </div>
-        <div className="font-display text-lg leading-tight transition-transform duration-500 group-hover:translate-x-0.5">
-          {interest.label}
-        </div>
+      <div className="font-display text-lg leading-tight transition-transform duration-500 group-hover:translate-x-0.5">
+        {interest.label}
       </div>
       {isInteractive && (
         <span
@@ -117,9 +111,6 @@ export function InterestCard({ interest, index }: { interest: InterestRow; index
                 )}
               </motion.span>
               <div className="min-w-0 text-left">
-                <div className="font-mono-tight text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1.5">
-                  {ordinal}
-                </div>
                 <DialogTitle className="font-display text-2xl md:text-3xl leading-tight text-left">
                   {interest.label}
                 </DialogTitle>
