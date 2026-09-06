@@ -51,7 +51,7 @@ export function RecognitionSection({ section, recognitions }: RecognitionSection
                 <div className="relative mt-5 pt-4 border-t border-[color:var(--hairline)]">
                   <CredentialLink
                     href={item.proof_url}
-                    label="View proof"
+                    label="View"
                     ariaLabel={`View proof of ${item.title}`}
                   />
                 </div>

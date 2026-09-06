@@ -129,7 +129,7 @@ export function RecognitionForm({ recognition }: { recognition?: RecognitionRow 
                 />
               </FormControl>
               <FormDescription>
-                Adds a &ldquo;View proof&rdquo; link on the public award card. Upload a PDF or image
+                Adds a &ldquo;View&rdquo; link on the public award card. Upload a PDF or image
                 (certificate, screenshot), or paste a link to an announcement. Leave blank to hide it.
               </FormDescription>
               <FormMessage />
