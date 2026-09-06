@@ -40,12 +40,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import type { SectionItemCounts } from "@/lib/queries/sections";
 import type { SectionRow } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { sectionEditSchema, type SectionEditInput } from "@/lib/validations/sections";
 import { reorderSections, toggleSectionPublish, updateSectionCopy } from "./actions";
 
-export function SectionsList({ sections }: { sections: SectionRow[] }) {
+export function SectionsList({
+  sections,
+  itemCounts,
+}: {
+  sections: SectionRow[];
+  itemCounts: SectionItemCounts;
+}) {
   const [items, setItems] = useState(sections);
   const [editing, setEditing] = useState<SectionRow | null>(null);
 
@@ -111,6 +118,7 @@ export function SectionsList({ sections }: { sections: SectionRow[] }) {
                 section={section}
                 onEdit={() => setEditing(section)}
                 onTogglePublish={(checked) => handleTogglePublish(section.id, checked)}
+                itemCount={itemCounts[section.key]}
               />
             ))}
           </ul>
@@ -130,10 +138,13 @@ function SortableRow({
   section,
   onEdit,
   onTogglePublish,
+  itemCount,
 }: {
   section: SectionRow;
   onEdit: () => void;
   onTogglePublish: (checked: boolean) => void;
+  /** Undefined for about/contact, which render from singletons and are never empty. */
+  itemCount?: number;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: section.id,
@@ -173,8 +184,19 @@ function SortableRow({
               nav: {section.nav_label}
             </span>
           )}
+          {section.is_published && itemCount === 0 && (
+            <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+              Empty — nothing to show yet
+            </span>
+          )}
         </div>
         <p className="truncate text-sm font-medium">{section.heading || "(no heading set)"}</p>
+        {section.is_published && itemCount === 0 && (
+          <p className="truncate text-xs text-amber-600 dark:text-amber-400">
+            This section stays off the page until you add an item under {section.key} in the
+            sidebar.
+          </p>
+        )}
         {section.eyebrow && (
           <p className="truncate text-xs text-muted-foreground">{section.eyebrow}</p>
         )}
