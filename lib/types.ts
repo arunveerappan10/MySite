@@ -133,6 +133,8 @@ export interface InterestRow extends Orderable, Timestamped {
   id: string;
   label: string;
   icon: string;
+  /** Tile prompt inviting a click, e.g. "Play a game?". Falls back to "View details". */
+  cue_label: string | null;
   /** Outbound CTA — e.g. a chess.com profile to challenge from. */
   link_url: string | null;
   link_label: string | null;

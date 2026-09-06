@@ -34,6 +34,7 @@ export function InterestForm({ interest }: { interest?: InterestRow }) {
     defaultValues: {
       label: interest?.label ?? "",
       icon: (interest?.icon as InterestInput["icon"]) ?? DEFAULT_ICON,
+      cue_label: interest?.cue_label ?? null,
       link_url: interest?.link_url ?? null,
       link_label: interest?.link_label ?? null,
       details: interest?.details ?? [],
@@ -97,6 +98,29 @@ export function InterestForm({ interest }: { interest?: InterestRow }) {
               <FormControl>
                 <IconSelectField value={field.value} onChange={field.onChange} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="cue_label"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tile prompt (optional)</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  value={field.value ?? ""}
+                  onChange={(event) => field.onChange(event.target.value || null)}
+                  placeholder="View details"
+                />
+              </FormControl>
+              <FormDescription>
+                The wording shown on the tile itself, inviting a click &mdash; &ldquo;Play a
+                game?&rdquo;, &ldquo;Details&rdquo;. Defaults to &ldquo;View details&rdquo;. Only
+                appears once the interest has a link or detail rows.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

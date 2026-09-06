@@ -13,6 +13,7 @@ export const interestDetailSchema = z.object({
 export const interestSchema = z.object({
   label: z.string().trim().min(1, "Required").max(60),
   icon: z.enum(ICON_KEYS),
+  cue_label: optionalTextSchema(32),
   link_url: optionalUrlSchema,
   link_label: optionalTextSchema(60),
   details: z.array(interestDetailSchema).max(12, "Up to 12 items"),

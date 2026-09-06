@@ -23,13 +23,16 @@ const ROW_TRANSITION = { duration: 0.55, ease: MOTION_EASE };
  * chess links out to a profile, volunteering lists the events attended. Tiles with
  * neither stay inert rather than opening an empty dialog.
  *
- * Openable tiles carry a persistent "View details" cue rather than a corner badge —
- * hover-only affordances leave the tile looking inert until the pointer lands on it. */
+ * Openable tiles carry a persistent prompt rather than a corner badge — hover-only
+ * affordances leave the tile looking inert until the pointer lands on it. The wording is
+ * the admin's ("Play a game?", "Details"), falling back to "View details". */
 export function InterestCard({ interest, index }: { interest: InterestRow; index: number }) {
   const Icon = getIcon(interest.icon);
   const details = interest.details ?? [];
   const isInteractive = Boolean(interest.link_url) || details.length > 0;
   const ordinal = String(index + 1).padStart(2, "0");
+  // Admin-authored, so rendered as typed — no uppercase transform.
+  const cueLabel = interest.cue_label ?? "View details";
 
   const face = (
     <>
@@ -51,10 +54,10 @@ export function InterestCard({ interest, index }: { interest: InterestRow; index
       {isInteractive && (
         <span
           aria-hidden
-          className="mt-auto inline-flex items-center gap-1.5 font-mono-tight text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 transition-colors duration-500 group-hover:text-primary"
+          className="mt-auto inline-flex items-center gap-1.5 font-mono-tight text-[11px] tracking-wide text-muted-foreground/70 transition-colors duration-500 group-hover:text-primary"
         >
-          View details
-          <ArrowRight className="h-3 w-3 transition-transform duration-500 group-hover:translate-x-1" />
+          {cueLabel}
+          <ArrowRight className="h-3 w-3 shrink-0 transition-transform duration-500 group-hover:translate-x-1" />
         </span>
       )}
       <span
@@ -83,7 +86,7 @@ export function InterestCard({ interest, index }: { interest: InterestRow; index
             styling, and nesting it inside a button would break the layout. */}
         <DialogTrigger
           className="absolute inset-0 z-10 rounded-2xl cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          aria-label={`${interest.label} — see more`}
+          aria-label={`${interest.label} — ${cueLabel}`}
         />
       </FadeIn>
 
