@@ -7,6 +7,7 @@ export const certificationSchema = z.object({
   credential_id: z.string().trim().min(1, "Required").max(120),
   validity_label: z.string().trim().min(1, "Required").max(60),
   verify_url: optionalUrlSchema,
+  proof_url: optionalUrlSchema,
   image_url: z.string().url().nullable(),
 });
 

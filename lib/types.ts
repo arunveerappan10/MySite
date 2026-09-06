@@ -104,6 +104,8 @@ export interface RecognitionRow extends Orderable, Timestamped {
   title: string;
   body: string;
   image_url: string | null;
+  /** Uploaded proof file (documents/media bucket) or an external link. */
+  proof_url: string | null;
 }
 
 export interface CertificationRow extends Orderable, Timestamped {
@@ -113,6 +115,8 @@ export interface CertificationRow extends Orderable, Timestamped {
   credential_id: string;
   validity_label: string;
   verify_url: string | null;
+  /** Uploaded proof file (documents/media bucket) or an external link. */
+  proof_url: string | null;
   image_url: string | null;
 }
 

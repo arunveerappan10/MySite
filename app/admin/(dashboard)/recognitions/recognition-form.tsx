@@ -7,10 +7,12 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { IconSelectField } from "@/components/admin/icon-select-field";
 import { ImageUploadField } from "@/components/admin/image-upload-field";
+import { ProofUploadField } from "@/components/admin/proof-upload-field";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,13 +36,14 @@ export function RecognitionForm({ recognition }: { recognition?: RecognitionRow 
       icon: (recognition?.icon as RecognitionInput["icon"]) ?? DEFAULT_ICON,
       title: recognition?.title ?? "",
       body: recognition?.body ?? "",
+      proof_url: recognition?.proof_url ?? null,
       image_url: recognition?.image_url ?? null,
     },
   });
 
   async function onSubmit(data: RecognitionInput) {
     const result = isEditing
-      ? await updateRecognition(recordId, data, recognition.image_url)
+      ? await updateRecognition(recordId, data, recognition.image_url, recognition.proof_url)
       : await createRecognition(recordId, data);
 
     if (result.error) {
@@ -107,6 +110,28 @@ export function RecognitionForm({ recognition }: { recognition?: RecognitionRow 
               <FormControl>
                 <Textarea rows={4} {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="proof_url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Proof (optional)</FormLabel>
+              <FormControl>
+                <ProofUploadField
+                  value={field.value}
+                  onChange={field.onChange}
+                  collection="recognitions"
+                  recordId={recordId}
+                />
+              </FormControl>
+              <FormDescription>
+                Adds a &ldquo;View proof&rdquo; link on the public award card. Upload a PDF or image
+                (certificate, screenshot), or paste a link to an announcement. Leave blank to hide it.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

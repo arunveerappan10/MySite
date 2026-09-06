@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { ImageUploadField } from "@/components/admin/image-upload-field";
+import { ProofUploadField } from "@/components/admin/proof-upload-field";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -34,13 +35,14 @@ export function CertificationForm({ certification }: { certification?: Certifica
       credential_id: certification?.credential_id ?? "",
       validity_label: certification?.validity_label ?? "",
       verify_url: certification?.verify_url ?? "",
+      proof_url: certification?.proof_url ?? null,
       image_url: certification?.image_url ?? null,
     },
   });
 
   async function onSubmit(data: CertificationInput) {
     const result = isEditing
-      ? await updateCertification(recordId, data, certification.image_url)
+      ? await updateCertification(recordId, data, certification.image_url, certification.proof_url)
       : await createCertification(recordId, data);
 
     if (result.error) {
@@ -141,6 +143,28 @@ export function CertificationForm({ certification }: { certification?: Certifica
               <FormDescription>
                 Adds the &ldquo;Verify&rdquo; link on the public certification card. Leave blank to hide it.
                 https:// is added for you.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="proof_url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Proof (optional)</FormLabel>
+              <FormControl>
+                <ProofUploadField
+                  value={field.value}
+                  onChange={field.onChange}
+                  collection="certifications"
+                  recordId={recordId}
+                />
+              </FormControl>
+              <FormDescription>
+                Adds a &ldquo;View&rdquo; link beside Verify. Upload a PDF or image of the certificate,
+                or paste a link &mdash; useful for credentials with no public verification page.
               </FormDescription>
               <FormMessage />
             </FormItem>

@@ -1,5 +1,5 @@
-import { ArrowUpRight } from "lucide-react";
 import { FadeIn } from "@/components/motion/fade-in";
+import { CredentialLink } from "@/components/site/credential-link";
 import { SectionHeading } from "@/components/site/section-heading";
 import { SectionThumb } from "@/components/site/section-thumb";
 import type { CertificationRow, SectionRow } from "@/lib/types";
@@ -54,19 +54,23 @@ export function CertificationsSection({ section, certifications }: Certification
                     {cert.validity_label}
                   </span>
                 </div>
-                {cert.verify_url && (
-                  <a
-                    href={cert.verify_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Verify ${cert.name} credential`}
-                    className="group/verify inline-flex items-center gap-1 text-[10px] font-mono-tight uppercase tracking-[0.16em] text-muted-foreground hover:text-primary transition-colors duration-300 shrink-0"
-                  >
-                    <span className="relative after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-primary after:transition-transform after:duration-300 group-hover/verify:after:scale-x-100">
-                      Verify
-                    </span>
-                    <ArrowUpRight className="w-3 h-3 transition-transform duration-300 group-hover/verify:translate-x-0.5 group-hover/verify:-translate-y-0.5" />
-                  </a>
+                {(cert.verify_url || cert.proof_url) && (
+                  <div className="flex items-center gap-3 shrink-0">
+                    {cert.verify_url && (
+                      <CredentialLink
+                        href={cert.verify_url}
+                        label="Verify"
+                        ariaLabel={`Verify ${cert.name} credential`}
+                      />
+                    )}
+                    {cert.proof_url && (
+                      <CredentialLink
+                        href={cert.proof_url}
+                        label="View"
+                        ariaLabel={`View proof of ${cert.name}`}
+                      />
+                    )}
+                  </div>
                 )}
               </div>
             </FadeIn>

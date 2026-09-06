@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { FadeIn } from "@/components/motion/fade-in";
+import { CredentialLink } from "@/components/site/credential-link";
 import { SectionHeading } from "@/components/site/section-heading";
 import { getIcon } from "@/lib/icon-map";
 import type { RecognitionRow, SectionRow } from "@/lib/types";
@@ -46,6 +47,15 @@ export function RecognitionSection({ section, recognitions }: RecognitionSection
                 {item.title}
               </h3>
               <p className="relative mt-3 text-sm text-muted-foreground leading-relaxed">{item.body}</p>
+              {item.proof_url && (
+                <div className="relative mt-5 pt-4 border-t border-[color:var(--hairline)]">
+                  <CredentialLink
+                    href={item.proof_url}
+                    label="View proof"
+                    ariaLabel={`View proof of ${item.title}`}
+                  />
+                </div>
+              )}
             </FadeIn>
           );
         })}

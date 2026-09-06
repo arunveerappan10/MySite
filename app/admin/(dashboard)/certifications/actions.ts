@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { logger } from "@/lib/logger";
 import { STORAGE_BUCKETS } from "@/lib/constants";
-import { extractStoragePath } from "@/lib/storage-utils";
+import { extractStoragePath, parseStorageUrl } from "@/lib/storage-utils";
 import { createClient } from "@/lib/supabase/server";
 import { certificationSchema, type CertificationInput } from "@/lib/validations/certifications";
 
@@ -16,6 +16,18 @@ async function removeImageIfReplaced(
   if (!oldUrl || oldUrl === newUrl) return;
   const path = extractStoragePath(oldUrl, STORAGE_BUCKETS.media);
   if (path) await supabase.storage.from(STORAGE_BUCKETS.media).remove([path]);
+}
+
+/** Proof can be an uploaded file in either bucket, or an external link with nothing to
+ * clean up — parseStorageUrl tells the two apart. */
+async function removeProofIfReplaced(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  oldUrl: string | null,
+  newUrl: string | null,
+) {
+  if (!oldUrl || oldUrl === newUrl) return;
+  const parsed = parseStorageUrl(oldUrl);
+  if (parsed) await supabase.storage.from(parsed.bucket).remove([parsed.path]);
 }
 
 export async function createCertification(id: string, input: CertificationInput) {
@@ -47,7 +59,12 @@ export async function createCertification(id: string, input: CertificationInput)
   return { success: true as const, id };
 }
 
-export async function updateCertification(id: string, input: CertificationInput, previousImageUrl: string | null) {
+export async function updateCertification(
+  id: string,
+  input: CertificationInput,
+  previousImageUrl: string | null,
+  previousProofUrl: string | null,
+) {
   await requireAdmin();
 
   const parsed = certificationSchema.safeParse(input);
@@ -64,6 +81,7 @@ export async function updateCertification(id: string, input: CertificationInput,
   }
 
   await removeImageIfReplaced(supabase, previousImageUrl, parsed.data.image_url);
+  await removeProofIfReplaced(supabase, previousProofUrl, parsed.data.proof_url);
 
   revalidatePath("/");
   revalidatePath("/admin/certifications");
@@ -74,7 +92,7 @@ export async function deleteCertification(id: string) {
   await requireAdmin();
 
   const supabase = await createClient();
-  const { data: existing } = await supabase.from("certifications").select("image_url").eq("id", id).maybeSingle();
+  const { data: existing } = await supabase.from("certifications").select("image_url, proof_url").eq("id", id).maybeSingle();
   const { error } = await supabase.from("certifications").delete().eq("id", id);
 
   if (error) {
@@ -86,6 +104,7 @@ export async function deleteCertification(id: string) {
     const path = extractStoragePath(existing.image_url, STORAGE_BUCKETS.media);
     if (path) await supabase.storage.from(STORAGE_BUCKETS.media).remove([path]);
   }
+  await removeProofIfReplaced(supabase, existing?.proof_url ?? null, null);
 
   revalidatePath("/");
   revalidatePath("/admin/certifications");
