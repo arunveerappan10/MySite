@@ -37,4 +37,13 @@ export const optionalUrlSchema = z
   .refine((value) => value === null || value.length <= MAX_URL_LENGTH, "URL is too long")
   .refine((value) => value === null || isHttpUrl(value), "Enter a valid URL");
 
+/** Optional free text that stores NULL rather than "" when blank, so "no value" has a
+ * single representation — the same rule optionalUrlSchema applies to links. */
+export function optionalTextSchema(max: number) {
+  return z
+    .union([z.string(), z.null()])
+    .transform((value) => value?.trim() || null)
+    .refine((value) => value === null || value.length <= max, `Keep this under ${max} characters`);
+}
+
 export const positionSchema = z.number().int().min(0);

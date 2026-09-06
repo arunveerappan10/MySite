@@ -6,11 +6,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { IconSelectField } from "@/components/admin/icon-select-field";
+import { KeyValueArrayEditor } from "@/components/admin/array-field-editor";
 import { ImageUploadField } from "@/components/admin/image-upload-field";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -32,6 +34,9 @@ export function InterestForm({ interest }: { interest?: InterestRow }) {
     defaultValues: {
       label: interest?.label ?? "",
       icon: (interest?.icon as InterestInput["icon"]) ?? DEFAULT_ICON,
+      link_url: interest?.link_url ?? null,
+      link_label: interest?.link_label ?? null,
+      details: interest?.details ?? [],
       image_url: interest?.image_url ?? null,
     },
   });
@@ -96,6 +101,55 @@ export function InterestForm({ interest }: { interest?: InterestRow }) {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="link_url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Link (optional)</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  value={field.value ?? ""}
+                  onChange={(event) => field.onChange(event.target.value || null)}
+                  placeholder="chess.com/member/yourname"
+                  inputMode="url"
+                />
+              </FormControl>
+              <FormDescription>
+                Shown as a button inside the interest&rsquo;s dialog. https:// is added for you.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="link_label"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Link text (optional)</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  value={field.value ?? ""}
+                  onChange={(event) => field.onChange(event.target.value || null)}
+                  placeholder="Challenge me on Chess.com"
+                />
+              </FormControl>
+              <FormDescription>Defaults to &ldquo;Open link&rdquo;. Needs a link above.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormItem>
+          <FormLabel>Details (optional)</FormLabel>
+          <KeyValueArrayEditor name="details" maxItems={12} />
+          <FormDescription>
+            Listed inside the dialog &mdash; volunteering events and their dates, chess formats and
+            ratings. Left column is the name, right is the date or note (may be left blank).
+          </FormDescription>
+        </FormItem>
         <div className="flex gap-3">
           <Button type="submit" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting ? "Saving…" : isEditing ? "Save changes" : "Create interest"}

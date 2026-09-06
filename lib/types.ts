@@ -133,6 +133,11 @@ export interface InterestRow extends Orderable, Timestamped {
   id: string;
   label: string;
   icon: string;
+  /** Outbound CTA — e.g. a chess.com profile to challenge from. */
+  link_url: string | null;
+  link_label: string | null;
+  /** Rows shown in the interest's dialog, e.g. volunteering events attended. */
+  details: KeyValue[];
   image_url: string | null;
 }
 
